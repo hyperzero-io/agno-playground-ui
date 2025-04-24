@@ -93,9 +93,10 @@ This project is licensed under the [MIT License](./LICENSE).
 
 ## 🖼️ Image Attachment & Multi-modality
 
-- **Paste, drag-and-drop, or attach images**: You can paste images, drag-and-drop them into the chat input, or use the attach button to select an image file. A thumbnail preview appears above the input before sending.
-- **Remove before sending**: Click the × button on the thumbnail to remove the image before sending.
-- **Image thumbnails in chat**: Sent images appear as thumbnails under your message in the chat history.
+- **Paste, drag-and-drop, or attach images**: You can paste images, drag-and-drop them into the chat input, or use the attach button to select image files. A thumbnail preview appears above the input before sending.
+- **Send multiple images at once**: You can attach, paste, or drag-and-drop multiple images in a single message. All selected images will be sent together and shown as thumbnails in your chat message.
+- **Remove before sending**: Click the × button on any thumbnail to remove that image before sending.
+- **Image thumbnails in chat**: Sent images appear as small thumbnails under your message in the chat history, saving space and keeping the UI clean. (Click-to-enlarge coming soon!)
 - **Supports multi-modality**: Images, video, and audio are all rendered inline in the chat.
 
 ## ⚡ Real-time Tool Calls & Reasoning
