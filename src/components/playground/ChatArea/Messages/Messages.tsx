@@ -2,17 +2,15 @@ import type { PlaygroundChatMessage } from '@/types/playground'
 
 import { AgentMessage, UserMessage, ToolComponent } from './MessageItem'
 import Tooltip from '@/components/ui/tooltip'
-import { memo } from 'react'
+import React, { type FC } from 'react'
+import ChatBlankState from './ChatBlankState'
+import Icon from '@/components/ui/icon'
 import {
-  ToolCallProps,
   ReasoningStepProps,
   ReasoningProps,
   ReferenceData,
   Reference
 } from '@/types/playground'
-import React, { type FC } from 'react'
-import ChatBlankState from './ChatBlankState'
-import Icon from '@/components/ui/icon'
 
 interface MessageListProps {
   messages: PlaygroundChatMessage[]

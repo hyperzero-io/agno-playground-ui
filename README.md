@@ -57,6 +57,32 @@ By default Agent UI connects to `http://localhost:7777`. You can easily change t
 
 The default endpoint works with the standard Agno Playground setup described in the [official documentation](https://agno.link/agent-ui#connect-to-local-agents).
 
+## Running with Docker
+
+You can build and run the app using Docker and Docker Compose. The app will be available at [http://localhost:3500](http://localhost:3500).
+
+### Build and Run
+
+```
+docker-compose up --build
+```
+
+This will:
+- Build the Docker image using the provided `Dockerfile`.
+- Start the app in a container, mapping port 3500 on your host to port 3000 in the container (the default Next.js port).
+
+### Stopping the App
+
+To stop the app, press `Ctrl+C` in the terminal, or run:
+
+```
+docker-compose down
+```
+
+### Notes
+- The app runs in production mode with `NODE_ENV=production`.
+- You can modify the `docker-compose.yml` or `Dockerfile` for custom setups as needed.
+
 ## Contributing
 
 Contributions are welcome! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution guidelines.

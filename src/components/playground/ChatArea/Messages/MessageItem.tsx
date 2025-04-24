@@ -98,7 +98,7 @@ const UserMessage = memo(({ message }: MessageProps) => {
           {message.content}
           {message.images && message.images.length > 0 && (
             <div className="mt-2">
-              <Images images={message.images} />
+              <Images images={message.images} thumbnail />
             </div>
           )}
         </div>

@@ -65,12 +65,12 @@ const useAIChatStreamHandler = () => {
       })
 
       let userImages: { url: string; revised_prompt: string }[] | undefined = undefined;
-      if (formData.get('files')) {
-        const file = formData.get('files') as File;
-        userImages = [{
+      const files = formData.getAll('files') as File[];
+      if (files && files.length > 0) {
+        userImages = files.map(file => ({
           url: URL.createObjectURL(file),
           revised_prompt: ''
-        }];
+        }));
       }
 
       addMessage({

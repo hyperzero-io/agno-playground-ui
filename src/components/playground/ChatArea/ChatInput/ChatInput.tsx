@@ -15,20 +15,20 @@ const ChatInput = () => {
   const [selectedAgent] = useQueryState('agent')
   const [inputMessage, setInputMessage] = useState('')
   const isStreaming = usePlaygroundStore((state) => state.isStreaming)
-  const [pastedImage, setPastedImage] = useState<File | null>(null)
+  const [pastedImages, setPastedImages] = useState<File[]>([])
 
   const handleSubmit = async () => {
-    if (!inputMessage.trim() && !pastedImage) return
+    if (!inputMessage.trim() && pastedImages.length === 0) return;
 
     try {
-      if (pastedImage) {
+      if (pastedImages.length > 0) {
         const formData = new FormData();
-        formData.append('files', pastedImage);
+        pastedImages.forEach((file) => formData.append('files', file));
         if (inputMessage.trim()) {
           formData.append('message', inputMessage);
         }
         setInputMessage('');
-        setPastedImage(null);
+        setPastedImages([]);
         await handleStreamResponse(formData);
       } else {
         const currentMessage = inputMessage;
@@ -40,30 +40,40 @@ const ChatInput = () => {
         `Error in handleSubmit: ${
           error instanceof Error ? error.message : String(error)
         }`
-      )
+      );
     }
   }
 
   const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
     const items = e.clipboardData.items;
+    let added = false;
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
       if (item.type.indexOf('image') !== -1) {
         const file = item.getAsFile();
         if (file) {
-          setPastedImage(file);
-          e.preventDefault();
+          setPastedImages((prev) => {
+            if (prev.some((f) => f.name === file.name && f.size === file.size)) return prev;
+            return [...prev, file];
+          });
+          added = true;
         }
       }
     }
+    if (added) e.preventDefault();
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const file = e.dataTransfer.files[0];
-      if (file.type.startsWith('image/')) {
-        setPastedImage(file);
+      const files = Array.from(e.dataTransfer.files).filter((file) => file.type.startsWith('image/'));
+      if (files.length > 0) {
+        setPastedImages((prev) => {
+          const newFiles = files.filter(
+            (file) => !prev.some((f) => f.name === file.name && f.size === file.size)
+          );
+          return [...prev, ...newFiles];
+        });
       }
     }
   };
@@ -75,23 +85,26 @@ const ChatInput = () => {
   return (
     <div className="flex flex-col items-center w-full">
       <div className="w-full max-w-2xl">
-        {pastedImage && (
-          <div className="flex items-center gap-3 mb-2">
-            <div className="relative">
-              <img
-                src={URL.createObjectURL(pastedImage)}
-                alt="Attached preview"
-                className="w-16 h-16 object-cover rounded-lg border border-accent shadow"
-              />
-              <button
-                type="button"
-                className="absolute -top-2 -right-2 bg-white text-red-500 rounded-full p-1 shadow hover:bg-red-100"
-                onClick={() => setPastedImage(null)}
-                aria-label="Remove image"
-              >
-                ×
-              </button>
-            </div>
+        {pastedImages.length > 0 && (
+          <div className="flex items-center gap-3 mb-2 flex-wrap">
+            {pastedImages.map((img, idx) => (
+              <div className="relative" key={img.name + img.size + idx}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={URL.createObjectURL(img)}
+                  alt="Attached preview"
+                  className="w-16 h-16 object-cover rounded-lg border border-accent shadow"
+                />
+                <button
+                  type="button"
+                  className="absolute -top-2 -right-2 bg-white text-red-500 rounded-full p-1 shadow hover:bg-red-100"
+                  onClick={() => setPastedImages((prev) => prev.filter((_, i) => i !== idx))}
+                  aria-label="Remove image"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -124,7 +137,7 @@ const ChatInput = () => {
         </div>
         <Button
           onClick={handleSubmit}
-          disabled={!selectedAgent || (!inputMessage.trim() && !pastedImage) || isStreaming}
+          disabled={!selectedAgent || (!inputMessage.trim() && pastedImages.length === 0) || isStreaming}
           size="icon"
           className="rounded-xl bg-primary p-5 text-primaryAccent"
         >
